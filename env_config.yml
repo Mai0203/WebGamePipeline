@@ -1,0 +1,77 @@
+project:
+  output_dir: ./archive/test_compact_2
+  max_concurrent_tasks: 10
+  resume: true
+
+input:
+  path: ./data/test_compact.jsonl
+  data_id_field: data_id
+  query_field: query
+  data_id_prefix: ""
+  limit:
+
+agent:
+  model: claude-opus-5
+  # model: glm-5.2
+  # base_url:
+  # base_url: http://127.0.0.1:4002
+  # 可选：adaptive / enabled / disabled
+  thinking:
+    type: disabled
+  #   budget_tokens: 20000
+  max_turns: 200
+  cli_path: /usr/local/bin/claude
+  permission_mode: bypassPermissions
+  setting_sources:
+    - project
+  cwd: .
+  initialize_timeout_ms: 180000
+  initialize_max_retries: 2
+  initialize_retry_sleep: 5
+  manual_compact: false
+  env:
+    ANTHROPIC_API_KEY: ""
+    HTTP_PROXY: ""
+    HTTPS_PROXY: ""
+    NPM_CONFIG_REGISTRY: ""
+    npm_config_registry: ""
+    no_proxy: localhost,127.0.0.1
+    NO_PROXY: localhost,127.0.0.1
+  fork_session:
+    reuse: true
+    # 留空表示继承 agent.base_url / agent.model / agent.thinking
+    # base_url:
+    # base_url: http://127.0.0.1:4002
+    # model:  gemini-3.1-pro-preview
+    # thinking:
+    #   type: adaptive
+    env: {}
+
+prompts:
+  selected: default
+  generation_templates:
+    default: ./prompt/game_generation.md
+  optimization_context_mode: without_context
+  optimization_templates:
+    with_context: ./prompt/game_optimization_with_context.md
+    without_context: ./prompt/game_optimization_without_context.md
+  query_analysis_template: ./prompt/game_query_analysis.md
+  session_bootstrap_template: ./prompt/game_session_bootstrap.md
+  project_template_file: ./data/project_template.json
+
+verifier:
+  enabled: true
+  api_url: http://127.0.0.1:8301/verify
+  agent_type: interactive_video
+  timeout: 1800
+  max_retries: 3
+  retry_sleep: 5
+  request_count: 1
+  default_language: react
+  language_field: L2
+  keep_existing_project: false
+
+optimization:
+  enabled: true
+  rounds: 1
+  continue_when_verifier_fails: true
